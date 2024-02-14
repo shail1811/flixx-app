@@ -70,6 +70,10 @@ async function displayPopularShows(){
 async function getMovieDetails(){
     const id = window.location.search.split('=')[1];
     const data = await fetchAPIData(`movie/${id}`);
+
+    displayBackgroundImage('movie' , data.
+    backdrop_path);
+
     const div = document.createElement('div');
     div.innerHTML = `
         <div class="details-top">
@@ -119,6 +123,27 @@ async function getMovieDetails(){
     `;
     document.querySelector('#movie-details').appendChild(div);
     console.log(data);
+}
+
+function displayBackgroundImage(type , path){
+    const overlayDiv = document.createElement('div');
+    overlayDiv.style.backgroundImage = `url(https://image.tmdb.org/t/p/original/${path})`;
+    overlayDiv.style.backgroundSize = 'cover';
+    overlayDiv.style.backgroundPosition = 'center';
+    overlayDiv.style.backgroundRepeat = 'no-repeat';
+    overlayDiv.style.height = '100vh';
+    overlayDiv.style.width = '100vw';
+    overlayDiv.style.position = 'absolute';
+    overlayDiv.style.top = '0';
+    overlayDiv.style.left = '0';
+    overlayDiv.style.zIndex = '-1';
+    overlayDiv.style.opacity = '0.1';
+
+    if(type === 'movie'){
+        document.querySelector('#movie-details').appendChild(overlayDiv);
+    } else{
+        document.querySelector('#show-details').appendChild(overlayDiv);
+    }
 }
 
 function numberWithCommas(x) {
