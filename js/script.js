@@ -67,6 +67,63 @@ async function displayPopularShows(){
     }); 
 }
 
+async function getMovieDetails(){
+    const id = window.location.search.split('=')[1];
+    const data = await fetchAPIData(`movie/${id}`);
+    const div = document.createElement('div');
+    div.innerHTML = `
+        <div class="details-top">
+            <div>
+            ${
+                data.poster_path
+                ? `<img
+                src="https://image.tmdb.org/t/p/w500${data.poster_path}"
+                class="card-img-top"
+                alt="${data.title}"
+                />`
+                : `<img
+                src="images/no-image.jpg"
+                class="card-img-top"
+                alt="${data.title}"
+                />`
+            }
+            </div>
+            <div>
+                <h2>${data.title}</h2>
+                <p>
+                    <i class="fas fa-star text-primary"></i>
+                    ${data.vote_average.toFixed(1)} / 10
+                </p>
+                <p class="text-muted">Release Date: ${data.release_date}</p>
+                <p>${data.overview}</p>
+                <h5>Genres</h5>
+                <ul class="list-group">
+                   ${data.genres.map(genre => `<li>${genre.name}</li>`).join('')}
+                </ul>
+                <a href="${data.homepage}" target="_blank" class="btn">Visit Movie Homepage</a>
+            </div>
+        </div>
+  
+        <div class="details-bottom">
+            <h2>Movie Info</h2>
+            <ul>
+                <li><span class="text-secondary">Budget:</span> $${numberWithCommas(data.budget)}</li>
+                <li><span class="text-secondary">Revenue:</span> $${numberWithCommas(data.revenue)}</li>
+                <li><span class="text-secondary">Runtime:</span> ${data.runtime} minutes</li>
+                <li><span class="text-secondary">Status:</span> ${data.status}</li>
+            </ul>
+            <h4>Production Companies</h4>
+            <div class="list-group">    
+               ${data.production_companies.map(cmy => `<span>${cmy.name}</span>`).join('')} 
+            </div>
+    `;
+    document.querySelector('#movie-details').appendChild(div);
+    console.log(data);
+}
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
 function showSpinner(){
     document.querySelector('.spinner').classList.add('show');
@@ -120,7 +177,7 @@ function init() {
             console.log('TV SHOW DETAILS');
             break;
         case '/movie-details.html':
-            console.log('MOVIE DETAILS');
+            getMovieDetails();
             break;
         case '/search.html':
             console.log('SEARCH PAGE');
