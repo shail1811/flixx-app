@@ -118,11 +118,65 @@ async function getMovieDetails(){
             </ul>
             <h4>Production Companies</h4>
             <div class="list-group">    
-               ${data.production_companies.map(cmy => `<span>${cmy.name}</span>`).join('')} 
+               ${data.production_companies.map(cmy => `<span>${cmy.name}</span>`).join(',')} 
             </div>
     `;
     document.querySelector('#movie-details').appendChild(div);
-    console.log(data);
+}
+
+async function getShowDetails(){
+    const id = window.location.search.split('=')[1];
+    const data = await fetchAPIData(`tv/${id}`);
+
+    displayBackgroundImage('tv' , data.backdrop_path);
+
+    const div = document.createElement('div');
+    div.innerHTML = `
+            <div class="details-top">
+                <div>
+                ${
+                    data.poster_path
+                    ? `<img
+                    src="https://image.tmdb.org/t/p/w500${data.poster_path}"
+                    class="card-img-top"
+                    alt="${data.name}"
+                    />`
+                    : `<img
+                    src="images/no-image.jpg"
+                    class="card-img-top"
+                    alt="${data.name}"
+                    />`
+                }
+                </div>
+                <div>
+                    <h2>${data.name}</h2>
+                    <p>
+                        <i class="fas fa-star text-primary"></i>
+                        ${data.vote_average} / 10
+                    </p>
+                    <p class="text-muted">Release Date: ${data.first_air_date}</p>
+                    <p>${data.overview}</p>
+                    <h5>Genres</h5>
+                    <ul class="list-group">
+                        ${data.genres.map(genre => `<li>${genre.name}</li>`).join('')}
+                    </ul>
+                    <a href="${data.homepage}" target="_blank" class="btn">Visit Show Homepage</a>
+                </div>
+            </div>
+            <div class="details-bottom">
+                <h2>Show Info</h2>
+                <ul>
+                    <li><span class="text-secondary">Number Of Episodes:</span> ${data.number_of_episodes}</li>
+                    <li>
+                        <span class="text-secondary">Last Episode To Air:</span> ${data.last_episode_to_air.name}
+                    </li>
+                    <li><span class="text-secondary">Status:</span> ${data.status}</li>
+                </ul>
+                <h4>Production Companies</h4>
+                <div class="list-group">${data.production_companies.map(cmy => `<span>${cmy.name}</span>`).join(',')}</div>
+            </div>
+`;
+    document.querySelector('#show-details').appendChild(div);
 }
 
 function displayBackgroundImage(type , path){
@@ -199,7 +253,7 @@ function init() {
             displayPopularShows();
             break;
         case '/tv-details.html':
-            console.log('TV SHOW DETAILS');
+            getShowDetails();
             break;
         case '/movie-details.html':
             getMovieDetails();
